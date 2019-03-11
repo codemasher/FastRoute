@@ -1,6 +1,6 @@
 <?php
 
-namespace FastRoute\Dispatcher;
+namespace FastRouteTest\Dispatcher;
 
 class CharCountBasedTest extends DispatcherTest
 {

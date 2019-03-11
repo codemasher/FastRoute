@@ -1,6 +1,6 @@
 <?php
 
-namespace FastRoute;
+namespace FastRouteTest\HackTypechecker;
 
 use PHPUnit\Framework\TestCase;
 
