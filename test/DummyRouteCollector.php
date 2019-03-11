@@ -11,10 +11,10 @@ class DummyRouteCollector extends RouteCollector
     {
     }
 
-    public function addRoute($method, string $route, $handler):RouteCollector
+    public function addRoute(array $httpMethods, string $route, $handler):RouteCollector
     {
         $route = $this->currentGroupPrefix . $route;
-        $this->routes[] = [$method, $route, $handler];
+        $this->routes[] = [$httpMethods, $route, $handler];
         return $this;
     }
 }

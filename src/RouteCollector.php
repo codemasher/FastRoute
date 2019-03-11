@@ -34,17 +34,17 @@ class RouteCollector
      *
      * The syntax used in the $route string depends on the used route parser.
      *
-     * @param string|string[] $httpMethod
-     * @param string          $route
-     * @param mixed           $handler
+     * @param string[] $httpMethods
+     * @param string   $route
+     * @param mixed    $handler
      *
      * @return \FastRoute\RouteCollector
      */
-    public function addRoute($httpMethod, string $route, $handler):RouteCollector
+    public function addRoute(array $httpMethods, string $route, $handler):RouteCollector
     {
         $route = $this->currentGroupPrefix . $route;
         $routeDatas = $this->routeParser->parse($route);
-        foreach ((array) $httpMethod as $method) {
+        foreach ($httpMethods as $method) {
             foreach ($routeDatas as $routeData) {
                 $this->dataGenerator->addRoute($method, $routeData, $handler);
             }
@@ -85,7 +85,7 @@ class RouteCollector
      */
     public function get(string $route, $handler):RouteCollector
     {
-        $this->addRoute('GET', $route, $handler);
+        $this->addRoute(['GET'], $route, $handler);
 
         return $this;
     }
@@ -102,7 +102,7 @@ class RouteCollector
      */
     public function post(string $route, $handler):RouteCollector
     {
-        $this->addRoute('POST', $route, $handler);
+        $this->addRoute(['POST'], $route, $handler);
 
         return $this;
     }
@@ -119,7 +119,7 @@ class RouteCollector
      */
     public function put(string $route, $handler):RouteCollector
     {
-        $this->addRoute('PUT', $route, $handler);
+        $this->addRoute(['PUT'], $route, $handler);
 
         return $this;
     }
@@ -136,7 +136,7 @@ class RouteCollector
      */
     public function delete(string $route, $handler):RouteCollector
     {
-        $this->addRoute('DELETE', $route, $handler);
+        $this->addRoute(['DELETE'], $route, $handler);
 
         return $this;
     }
@@ -153,7 +153,7 @@ class RouteCollector
      */
     public function patch(string $route, $handler):RouteCollector
     {
-        $this->addRoute('PATCH', $route, $handler);
+        $this->addRoute(['PATCH'], $route, $handler);
 
         return $this;
     }
@@ -170,7 +170,7 @@ class RouteCollector
      */
     public function head(string $route, $handler):RouteCollector
     {
-        $this->addRoute('HEAD', $route, $handler);
+        $this->addRoute(['HEAD'], $route, $handler);
 
         return $this;
     }
@@ -187,7 +187,7 @@ class RouteCollector
      */
     public function options(string $route, $handler):RouteCollector
     {
-        $this->addRoute('OPTIONS', $route, $handler);
+        $this->addRoute(['OPTIONS'], $route, $handler);
 
         return $this;
     }
