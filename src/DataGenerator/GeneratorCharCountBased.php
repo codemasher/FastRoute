@@ -4,10 +4,7 @@ namespace FastRoute\DataGenerator;
 
 class GeneratorCharCountBased extends DataGeneratorAbstract
 {
-    protected function getApproxChunkSize():int
-    {
-        return 30;
-    }
+	protected $approxChunkSize = 30;
 
     protected function processChunk(array $regexToRoutesMap):array
     {

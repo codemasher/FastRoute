@@ -12,10 +12,8 @@ abstract class DataGeneratorAbstract implements DataGeneratorInterface
     /** @var Route[][] */
     protected $methodToRegexToRoutesMap = [];
 
-    /**
-     * @return int
-     */
-    abstract protected function getApproxChunkSize():int;
+    /** @var int */
+    protected $approxChunkSize = 10;
 
     /**
      * @return mixed[]
@@ -61,9 +59,9 @@ abstract class DataGeneratorAbstract implements DataGeneratorInterface
      * @param int
      * @return int
      */
-    private function computeChunkSize(int $count):int
+    protected function computeChunkSize(int $count):int
     {
-        $numParts = max(1, round($count / $this->getApproxChunkSize()));
+        $numParts = max(1, round($count / $this->approxChunkSize));
         return (int) ceil($count / $numParts);
     }
 
