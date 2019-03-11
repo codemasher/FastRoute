@@ -2,12 +2,15 @@
 
 namespace FastRoute;
 
+use FastRoute\DataGenerator\DataGeneratorInterface;
+use FastRoute\RouteParser\RouteParserInterface;
+
 class RouteCollector
 {
-    /** @var RouteParser */
+    /** @var \FastRoute\RouteParser\RouteParserInterface */
     protected $routeParser;
 
-    /** @var DataGenerator */
+    /** @var \FastRoute\DataGenerator\DataGeneratorInterface */
     protected $dataGenerator;
 
     /** @var string */
@@ -16,10 +19,10 @@ class RouteCollector
     /**
      * Constructs a route collector.
      *
-     * @param RouteParser   $routeParser
-     * @param DataGenerator $dataGenerator
+     * @param \FastRoute\RouteParser\RouteParserInterface     $routeParser
+     * @param \FastRoute\DataGenerator\DataGeneratorInterface $dataGenerator
      */
-    public function __construct(RouteParser $routeParser, DataGenerator $dataGenerator)
+    public function __construct(RouteParserInterface $routeParser, DataGeneratorInterface $dataGenerator)
     {
         $this->routeParser = $routeParser;
         $this->dataGenerator = $dataGenerator;

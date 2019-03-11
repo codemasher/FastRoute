@@ -2,7 +2,7 @@
 
 namespace FastRoute\DataGenerator;
 
-class MarkBased extends RegexBasedAbstract
+class GeneratorMarkBased extends DataGeneratorAbstract
 {
     protected function getApproxChunkSize():int
     {

@@ -2,20 +2,24 @@
 
 namespace FastRoute;
 
+use FastRoute\DataGenerator\GeneratorGroupCountBased;
+use FastRoute\Dispatcher\{DispatcherInterface, DispatcherGroupCountBased};
+use FastRoute\RouteParser\Std;
+
 if (!function_exists('FastRoute\simpleDispatcher')) {
     /**
      * @param callable $routeDefinitionCallback
      * @param array $options
      *
-     * @return Dispatcher
+     * @return \FastRoute\Dispatcher\DispatcherInterface
      */
-    function simpleDispatcher(callable $routeDefinitionCallback, array $options = []):Dispatcher
+    function simpleDispatcher(callable $routeDefinitionCallback, array $options = []):DispatcherInterface
     {
         $options += [
-            'routeParser' => 'FastRoute\\RouteParser\\Std',
-            'dataGenerator' => 'FastRoute\\DataGenerator\\GroupCountBased',
-            'dispatcher' => 'FastRoute\\Dispatcher\\GroupCountBased',
-            'routeCollector' => 'FastRoute\\RouteCollector',
+            'routeParser' => Std::class,
+            'dataGenerator' => GeneratorGroupCountBased::class,
+            'dispatcher' => DispatcherGroupCountBased::class,
+            'routeCollector' => RouteCollector::class,
         ];
 
         /** @var RouteCollector $routeCollector */
@@ -31,15 +35,15 @@ if (!function_exists('FastRoute\simpleDispatcher')) {
      * @param callable $routeDefinitionCallback
      * @param array $options
      *
-     * @return Dispatcher
+     * @return \FastRoute\Dispatcher\DispatcherInterface
      */
-    function cachedDispatcher(callable $routeDefinitionCallback, array $options = []):Dispatcher
+    function cachedDispatcher(callable $routeDefinitionCallback, array $options = []):DispatcherInterface
     {
         $options += [
-            'routeParser' => 'FastRoute\\RouteParser\\Std',
-            'dataGenerator' => 'FastRoute\\DataGenerator\\GroupCountBased',
-            'dispatcher' => 'FastRoute\\Dispatcher\\GroupCountBased',
-            'routeCollector' => 'FastRoute\\RouteCollector',
+            'routeParser' => Std::class,
+            'dataGenerator' => GeneratorGroupCountBased::class,
+            'dispatcher' => DispatcherGroupCountBased::class,
+            'routeCollector' => RouteCollector::class,
             'cacheDisabled' => false,
         ];
 

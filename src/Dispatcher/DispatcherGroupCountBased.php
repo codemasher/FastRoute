@@ -2,7 +2,7 @@
 
 namespace FastRoute\Dispatcher;
 
-class GroupCountBased extends RegexBasedAbstract
+class DispatcherGroupCountBased extends DispatcherAbstract
 {
     protected function dispatchVariableRoute(array $routeData, string $uri):array
     {

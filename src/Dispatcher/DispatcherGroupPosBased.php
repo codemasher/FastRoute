@@ -2,21 +2,24 @@
 
 namespace FastRoute\Dispatcher;
 
-class CharCountBased extends RegexBasedAbstract
+class DispatcherGroupPosBased extends DispatcherAbstract
 {
     protected function dispatchVariableRoute(array $routeData, string $uri):array
     {
         foreach ($routeData as $data) {
-            if (!preg_match($data['regex'], $uri . $data['suffix'], $matches)) {
+            if (!preg_match($data['regex'], $uri, $matches)) {
                 continue;
             }
 
-            [$handler, $varNames] = $data['routeMap'][end($matches)];
+            // find first non-empty match
+            /** @noinspection PhpStatementHasEmptyBodyInspection */
+            for ($i = 1; $matches[$i] === ''; ++$i);
+
+            [$handler, $varNames] = $data['routeMap'][$i];
 
             $vars = [];
-            $i = 0;
             foreach ($varNames as $varName) {
-                $vars[$varName] = $matches[++$i];
+                $vars[$varName] = $matches[$i++];
             }
             return [self::FOUND, $handler, $vars];
         }

@@ -2,14 +2,14 @@
 
 namespace FastRoute\RouteParser;
 
-use FastRoute\{BadRouteException, RouteParser};
+use FastRoute\BadRouteException;
 
 /**
  * Parses route strings of the following form:
  *
  * "/user/{name}[/{id:[0-9]+}]"
  */
-class Std implements RouteParser
+class Std implements RouteParserInterface
 {
     const VARIABLE_REGEX = <<<'REGEX'
 \{

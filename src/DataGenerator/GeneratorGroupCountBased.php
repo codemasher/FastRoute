@@ -2,7 +2,7 @@
 
 namespace FastRoute\DataGenerator;
 
-class GroupCountBased extends RegexBasedAbstract
+class GeneratorGroupCountBased extends DataGeneratorAbstract
 {
     protected function getApproxChunkSize():int
     {

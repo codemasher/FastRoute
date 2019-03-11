@@ -2,9 +2,9 @@
 
 namespace FastRoute\DataGenerator;
 
-use FastRoute\{BadRouteException, DataGenerator, Route};
+use FastRoute\{BadRouteException, Route};
 
-abstract class RegexBasedAbstract implements DataGenerator
+abstract class DataGeneratorAbstract implements DataGeneratorInterface
 {
     /** @var mixed[][] */
     protected $staticRoutes = [];

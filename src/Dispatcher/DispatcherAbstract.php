@@ -2,9 +2,7 @@
 
 namespace FastRoute\Dispatcher;
 
-use FastRoute\Dispatcher;
-
-abstract class RegexBasedAbstract implements Dispatcher
+abstract class DispatcherAbstract implements DispatcherInterface
 {
     /** @var mixed[][] */
     protected $staticRouteMap = [];

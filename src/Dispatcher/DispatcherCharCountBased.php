@@ -2,16 +2,16 @@
 
 namespace FastRoute\Dispatcher;
 
-class MarkBased extends RegexBasedAbstract
+class DispatcherCharCountBased extends DispatcherAbstract
 {
     protected function dispatchVariableRoute(array $routeData, string $uri):array
     {
         foreach ($routeData as $data) {
-            if (!preg_match($data['regex'], $uri, $matches)) {
+            if (!preg_match($data['regex'], $uri . $data['suffix'], $matches)) {
                 continue;
             }
 
-            [$handler, $varNames] = $data['routeMap'][$matches['MARK']];
+            [$handler, $varNames] = $data['routeMap'][end($matches)];
 
             $vars = [];
             $i = 0;
