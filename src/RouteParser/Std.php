@@ -2,8 +2,7 @@
 
 namespace FastRoute\RouteParser;
 
-use FastRoute\BadRouteException;
-use FastRoute\RouteParser;
+use FastRoute\{BadRouteException, RouteParser};
 
 /**
  * Parses route strings of the following form:
