@@ -7,7 +7,10 @@ class DispatcherCharCountBased extends DispatcherAbstract
     protected function dispatchVariableRoute(array $routeData, string $uri):array
     {
         foreach ($routeData as $data) {
-            if (!preg_match($data['regex'], $uri . $data['suffix'], $matches)) {
+            $preg_match = preg_match($data['regex'], $uri . $data['suffix'], $matches);
+            \FastRoute\catch_preg_error(__METHOD__, $data['regex'], $uri.$data['suffix']);
+
+            if (!$preg_match) {
                 continue;
             }
 

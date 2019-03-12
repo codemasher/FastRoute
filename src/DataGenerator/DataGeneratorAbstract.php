@@ -163,7 +163,7 @@ abstract class DataGeneratorAbstract implements DataGeneratorInterface
         }
 
         // Semi-accurate detection for capturing groups
-        return (bool) preg_match(
+        $preg_match = preg_match(
             '~
                 (?:
                     \(\?\(
@@ -178,5 +178,9 @@ abstract class DataGeneratorAbstract implements DataGeneratorInterface
             ~x',
             $regex
         );
+
+        \FastRoute\catch_preg_error(__METHOD__, '-', $regex);
+
+        return (bool)$preg_match;
     }
 }

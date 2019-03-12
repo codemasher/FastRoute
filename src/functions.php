@@ -75,4 +75,25 @@ if (!function_exists('FastRoute\simpleDispatcher')) {
 
         return new $options['dispatcher']($dispatchData);
     }
+
+    function catch_preg_error(string $fn, string $pattern, string $data):void{
+        $preg_error = preg_last_error();
+
+        if($preg_error !== PREG_NO_ERROR){
+            $errors = [
+                PREG_INTERNAL_ERROR        => 'PREG_INTERNAL_ERROR',
+                PREG_BACKTRACK_LIMIT_ERROR => 'PREG_BACKTRACK_LIMIT_ERROR',
+                PREG_RECURSION_LIMIT_ERROR => 'PREG_RECURSION_LIMIT_ERROR',
+                PREG_BAD_UTF8_ERROR        => 'PREG_BAD_UTF8_ERROR',
+                PREG_BAD_UTF8_OFFSET_ERROR => 'PREG_BAD_UTF8_OFFSET_ERROR',
+                PREG_JIT_STACKLIMIT_ERROR  => 'PREG_JIT_STACKLIMIT_ERROR',
+            ];
+
+            throw new \RuntimeException(
+                $fn.': '.($errors[$preg_error] ?? 'unknown preg_error').PHP_EOL
+                .'pattern: '.$pattern.PHP_EOL
+                .'data: '.$data
+            );
+        }
+    }
 }

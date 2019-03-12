@@ -57,10 +57,10 @@ REGEX;
      */
     private function parsePlaceholders(string $route):array
     {
-        if (!preg_match_all(
-            '~' . self::VARIABLE_REGEX . '~x', $route, $matches,
-            PREG_OFFSET_CAPTURE | PREG_SET_ORDER
-        )) {
+        $preg_match_all = preg_match_all('~' . self::VARIABLE_REGEX . '~x', $route, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+	    \FastRoute\catch_preg_error(__METHOD__, '-', $route);
+
+        if (!$preg_match_all) {
             return [$route];
         }
 

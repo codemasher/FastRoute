@@ -7,7 +7,10 @@ class DispatcherMarkBased extends DispatcherAbstract
     protected function dispatchVariableRoute(array $routeData, string $uri):array
     {
         foreach ($routeData as $data) {
-            if (!preg_match($data['regex'], $uri, $matches)) {
+            $preg_match = preg_match($data['regex'], $uri, $matches);
+            \FastRoute\catch_preg_error(__METHOD__, $data['regex'], $uri);
+
+            if (!$preg_match) {
                 continue;
             }
 
