@@ -15,22 +15,17 @@ abstract class DispatcherAbstract implements DispatcherInterface
         [$this->staticRouteMap, $this->variableRouteData] = $data;
     }
 
-    /**
-     * @return mixed[]
-     */
-    abstract protected function dispatchVariableRoute(array $routeData, string $uri):array;
+    abstract protected function dispatchVariableRoute(array $routeData, string $uri):DispatchedRoute;
 
-    public function dispatch(string $httpMethod, string $uri):array
+    public function dispatch(string $httpMethod, string $uri):DispatchedRoute
     {
         if (isset($this->staticRouteMap[$httpMethod][$uri])) {
-            $handler = $this->staticRouteMap[$httpMethod][$uri];
-            return [self::FOUND, $handler, []];
+            return new DispatchedRoute(self::FOUND, $this->staticRouteMap[$httpMethod][$uri]);
         }
 
-        $varRouteData = $this->variableRouteData;
-        if (isset($varRouteData[$httpMethod])) {
-            $result = $this->dispatchVariableRoute($varRouteData[$httpMethod], $uri);
-            if ($result[0] === self::FOUND) {
+        if (isset($this->variableRouteData[$httpMethod])) {
+            $result = $this->dispatchVariableRoute($this->variableRouteData[$httpMethod], $uri);
+            if ($result->status === self::FOUND) {
                 return $result;
             }
         }
@@ -38,12 +33,11 @@ abstract class DispatcherAbstract implements DispatcherInterface
         // For HEAD requests, attempt fallback to GET
         if ($httpMethod === 'HEAD') {
             if (isset($this->staticRouteMap['GET'][$uri])) {
-                $handler = $this->staticRouteMap['GET'][$uri];
-                return [self::FOUND, $handler, []];
+                 return new DispatchedRoute(self::FOUND, $this->staticRouteMap['GET'][$uri]);
             }
-            if (isset($varRouteData['GET'])) {
-                $result = $this->dispatchVariableRoute($varRouteData['GET'], $uri);
-                if ($result[0] === self::FOUND) {
+            if (isset($this->variableRouteData['GET'])) {
+                $result = $this->dispatchVariableRoute($this->variableRouteData['GET'], $uri);
+                if ($result->status === self::FOUND) {
                     return $result;
                 }
             }
@@ -51,12 +45,11 @@ abstract class DispatcherAbstract implements DispatcherInterface
 
         // If nothing else matches, try fallback routes
         if (isset($this->staticRouteMap['*'][$uri])) {
-            $handler = $this->staticRouteMap['*'][$uri];
-            return [self::FOUND, $handler, []];
+            return new DispatchedRoute(self::FOUND, $this->staticRouteMap['*'][$uri]);
         }
-        if (isset($varRouteData['*'])) {
-            $result = $this->dispatchVariableRoute($varRouteData['*'], $uri);
-            if ($result[0] === self::FOUND) {
+        if (isset($this->variableRouteData['*'])) {
+            $result = $this->dispatchVariableRoute($this->variableRouteData['*'], $uri);
+            if ($result->status === self::FOUND) {
                 return $result;
             }
         }
@@ -70,22 +63,22 @@ abstract class DispatcherAbstract implements DispatcherInterface
             }
         }
 
-        foreach ($varRouteData as $method => $routeData) {
+        foreach ($this->variableRouteData as $method => $routeData) {
             if ($method === $httpMethod) {
                 continue;
             }
 
             $result = $this->dispatchVariableRoute($routeData, $uri);
-            if ($result[0] === self::FOUND) {
+            if ($result->status === self::FOUND) {
                 $allowedMethods[] = $method;
             }
         }
 
         // If there are no allowed methods the route simply does not exist
         if ($allowedMethods) {
-            return [self::METHOD_NOT_ALLOWED, $allowedMethods];
+            return new DispatchedRoute(self::METHOD_NOT_ALLOWED, null, null, $allowedMethods);
         }
 
-        return [self::NOT_FOUND];
+        return new DispatchedRoute(self::NOT_FOUND);
     }
 }

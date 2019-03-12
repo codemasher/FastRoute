@@ -4,7 +4,7 @@ namespace FastRoute\Dispatcher;
 
 class DispatcherGroupPosBased extends DispatcherAbstract
 {
-    protected function dispatchVariableRoute(array $routeData, string $uri):array
+    protected function dispatchVariableRoute(array $routeData, string $uri):DispatchedRoute
     {
         foreach ($routeData as $data) {
             $preg_match = preg_match($data['regex'], $uri, $matches);
@@ -24,9 +24,9 @@ class DispatcherGroupPosBased extends DispatcherAbstract
             foreach ($varNames as $varName) {
                 $vars[$varName] = $matches[$i++];
             }
-            return [self::FOUND, $handler, $vars];
+            return new DispatchedRoute(self::FOUND, $handler, $vars);
         }
 
-        return [self::NOT_FOUND];
+        return new DispatchedRoute(self::NOT_FOUND);
     }
 }

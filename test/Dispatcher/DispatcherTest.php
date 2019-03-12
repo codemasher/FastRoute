@@ -34,10 +34,10 @@ abstract class DispatcherTest extends TestCase
     public function testFoundDispatches($method, $uri, $callback, $handler, $argDict)
     {
         $dispatcher = \FastRoute\simpleDispatcher($callback, $this->generateDispatcherOptions());
-        $info = $dispatcher->dispatch($method, $uri);
-        $this->assertSame($dispatcher::FOUND, $info[0]);
-        $this->assertSame($handler, $info[1]);
-        $this->assertSame($argDict, $info[2]);
+        $dispatchedRoute = $dispatcher->dispatch($method, $uri);
+        $this->assertSame($dispatcher::FOUND, $dispatchedRoute->status);
+        $this->assertSame($handler, $dispatchedRoute->handler);
+        $this->assertSame($argDict, $dispatchedRoute->arguments);
     }
 
     /**
@@ -46,11 +46,8 @@ abstract class DispatcherTest extends TestCase
     public function testNotFoundDispatches($method, $uri, $callback)
     {
         $dispatcher = \FastRoute\simpleDispatcher($callback, $this->generateDispatcherOptions());
-        $routeInfo = $dispatcher->dispatch($method, $uri);
-        $this->assertArrayNotHasKey(1, $routeInfo,
-            'NOT_FOUND result must only contain a single element in the returned info array'
-        );
-        $this->assertSame($dispatcher::NOT_FOUND, $routeInfo[0]);
+        $dispatchedRoute = $dispatcher->dispatch($method, $uri);
+        $this->assertSame($dispatcher::NOT_FOUND, $dispatchedRoute->status);
     }
 
     /**
@@ -59,14 +56,9 @@ abstract class DispatcherTest extends TestCase
     public function testMethodNotAllowedDispatches($method, $uri, $callback, $availableMethods)
     {
         $dispatcher = \FastRoute\simpleDispatcher($callback, $this->generateDispatcherOptions());
-        $routeInfo = $dispatcher->dispatch($method, $uri);
-        $this->assertArrayHasKey(1, $routeInfo,
-            'METHOD_NOT_ALLOWED result must return an array of allowed methods at index 1'
-        );
-
-        [$routedStatus, $methodArray] = $dispatcher->dispatch($method, $uri);
-        $this->assertSame($dispatcher::METHOD_NOT_ALLOWED, $routedStatus);
-        $this->assertSame($availableMethods, $methodArray);
+        $dispatchedRoute = $dispatcher->dispatch($method, $uri);
+        $this->assertSame($dispatcher::METHOD_NOT_ALLOWED, $dispatchedRoute->status);
+        $this->assertSame($availableMethods, $dispatchedRoute->allowedMethods);
     }
 
     public function testDuplicateVariableNameError()

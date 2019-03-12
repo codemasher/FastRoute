@@ -20,7 +20,7 @@ interface DispatcherInterface
      * @param string $httpMethod
      * @param string $uri
      *
-     * @return array
+     * @return \FastRoute\Dispatcher\DispatchedRoute
      */
-    public function dispatch(string $httpMethod, string $uri):array;
+    public function dispatch(string $httpMethod, string $uri):DispatchedRoute;
 }
