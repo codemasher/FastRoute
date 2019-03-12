@@ -11,7 +11,9 @@ class PregErrorTest extends TestCase{
 		// http://php.net/manual/pcre.configuration.php
 		ini_set('pcre.backtrack_limit', '1000000');
 		ini_set('pcre.recursion_limit', '100000');
-		ini_set('pcre.jit', '1');
+
+		// disable the troublemaker
+		ini_set('pcre.jit', '0');
 	}
 
 	// https://github.com/nikic/FastRoute/issues/167
