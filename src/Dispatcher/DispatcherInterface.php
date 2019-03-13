@@ -9,6 +9,13 @@ interface DispatcherInterface
     const METHOD_NOT_ALLOWED = 2;
 
     /**
+     * @param array $data
+     *
+     * @return \FastRoute\Dispatcher\DispatcherInterface
+     */
+    public function loadDispatchData(array $data):DispatcherInterface;
+
+    /**
      * Dispatches against the provided HTTP method verb and URI.
      *
      * Returns array with one of the following formats:

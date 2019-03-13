@@ -10,9 +10,16 @@ abstract class DispatcherAbstract implements DispatcherInterface
     /** @var mixed[] */
     protected $variableRouteData = [];
 
-    public function __construct(array $data)
+    public function __construct(array $data = null)
+    {
+        $this->loadDispatchData($data ?? [[], []]);
+    }
+
+    public function loadDispatchData(array $data):DispatcherInterface
     {
         [$this->staticRouteMap, $this->variableRouteData] = $data;
+
+        return $this;
     }
 
     abstract protected function dispatchVariableRoute(array $routeData, string $uri):DispatchedRoute;
