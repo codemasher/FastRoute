@@ -33,7 +33,7 @@ REGEX;
             if (\preg_match('~' . self::VARIABLE_REGEX . '(*SKIP)(*F) | \]~x', $routeWithoutClosingOptionals)) {
                 throw new BadRouteException('Optional segments can only occur at the end of a route');
             }
-            throw new BadRouteException("Number of opening '[' and closing ']' does not match");
+            throw new BadRouteException('Number of opening "[" and closing "]" does not match');
         }
 
         $currentRoute = '';

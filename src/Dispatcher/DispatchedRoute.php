@@ -42,11 +42,11 @@ class DispatchedRoute{
 	/**
 	 * Make the values effectively immutable
 	 *
-	 * @param $property
+	 * @param string $property
 	 *
 	 * @return mixed|null
 	 */
-	public function __get($property){
+	public function __get(string $property){
 
 		if(\property_exists($this, $property)){
 			return $this->{$property};

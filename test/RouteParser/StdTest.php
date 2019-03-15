@@ -127,15 +127,15 @@ class StdTest extends TestCase
         return [
             [
                 '/test[opt',
-                "Number of opening '[' and closing ']' does not match"
+                'Number of opening "[" and closing "]" does not match'
             ],
             [
                 '/test[opt[opt2]',
-                "Number of opening '[' and closing ']' does not match"
+                'Number of opening "[" and closing "]" does not match'
             ],
             [
                 '/testopt]',
-                "Number of opening '[' and closing ']' does not match"
+                'Number of opening "[" and closing "]" does not match'
             ],
             [
                 '/test[]',
