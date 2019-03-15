@@ -53,7 +53,7 @@ if (!function_exists('FastRoute\simpleDispatcher')) {
 
         if (!$options['cacheDisabled'] && file_exists($options['cacheFile'])) {
             $dispatchData = require $options['cacheFile'];
-            if (!is_array($dispatchData)) {
+            if (!\is_array($dispatchData)) {
                 throw new \RuntimeException('Invalid cache file "' . $options['cacheFile'] . '"');
             }
             return new $options['dispatcher']($dispatchData);
@@ -67,9 +67,9 @@ if (!function_exists('FastRoute\simpleDispatcher')) {
         /** @var RouteCollector $routeCollector */
         $dispatchData = $routeCollector->getData();
         if (!$options['cacheDisabled']) {
-            file_put_contents(
+            \file_put_contents(
                 $options['cacheFile'],
-                '<?php return ' . var_export($dispatchData, true) . ';'
+                '<?php return ' . \var_export($dispatchData, true) . ';'
             );
         }
 
@@ -77,16 +77,16 @@ if (!function_exists('FastRoute\simpleDispatcher')) {
     }
 
     function catch_preg_error(string $fn, string $pattern, string $data):void{
-        $preg_error = preg_last_error();
+        $preg_error = \preg_last_error();
 
-        if($preg_error !== PREG_NO_ERROR){
+        if($preg_error !== \PREG_NO_ERROR){
             $errors = [
-                PREG_INTERNAL_ERROR        => 'PREG_INTERNAL_ERROR',
-                PREG_BACKTRACK_LIMIT_ERROR => 'PREG_BACKTRACK_LIMIT_ERROR',
-                PREG_RECURSION_LIMIT_ERROR => 'PREG_RECURSION_LIMIT_ERROR',
-                PREG_BAD_UTF8_ERROR        => 'PREG_BAD_UTF8_ERROR',
-                PREG_BAD_UTF8_OFFSET_ERROR => 'PREG_BAD_UTF8_OFFSET_ERROR',
-                PREG_JIT_STACKLIMIT_ERROR  => 'PREG_JIT_STACKLIMIT_ERROR',
+                \PREG_INTERNAL_ERROR        => 'PREG_INTERNAL_ERROR',
+                \PREG_BACKTRACK_LIMIT_ERROR => 'PREG_BACKTRACK_LIMIT_ERROR',
+                \PREG_RECURSION_LIMIT_ERROR => 'PREG_RECURSION_LIMIT_ERROR',
+                \PREG_BAD_UTF8_ERROR        => 'PREG_BAD_UTF8_ERROR',
+                \PREG_BAD_UTF8_OFFSET_ERROR => 'PREG_BAD_UTF8_OFFSET_ERROR',
+                \PREG_JIT_STACKLIMIT_ERROR  => 'PREG_JIT_STACKLIMIT_ERROR',
             ];
 
             throw new \RuntimeException(

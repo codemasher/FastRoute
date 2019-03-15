@@ -7,7 +7,7 @@ class DispatcherGroupCountBased extends DispatcherAbstract
     protected function dispatchVariableRoute(array $routeData, string $uri):DispatchedRoute
     {
         foreach ($routeData as $data) {
-            $preg_match = preg_match($data['regex'], $uri, $matches);
+            $preg_match = \preg_match($data['regex'], $uri, $matches);
             \FastRoute\catch_preg_error(__METHOD__, $data['regex'], $uri);
 
             if (!$preg_match) {

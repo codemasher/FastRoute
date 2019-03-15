@@ -13,7 +13,7 @@ class GeneratorCharCountBased extends DataGeneratorAbstract
 
         $suffixLen = 0;
         $suffix = '';
-        $count = count($regexToRoutesMap);
+        $count = \count($regexToRoutesMap);
         foreach ($regexToRoutesMap as $regex => $route) {
             $suffixLen++;
             $suffix .= "\t";
@@ -22,7 +22,7 @@ class GeneratorCharCountBased extends DataGeneratorAbstract
             $routeMap[$suffix] = [$route->handler, $route->variables];
         }
 
-        $regex = '~^(?|' . implode('|', $regexes) . ')$~';
+        $regex = '~^(?|' . \implode('|', $regexes) . ')$~';
         return ['regex' => $regex, 'suffix' => '/' . $suffix, 'routeMap' => $routeMap];
     }
 }

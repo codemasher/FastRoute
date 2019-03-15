@@ -18,7 +18,7 @@ class GeneratorMarkBased extends DataGeneratorAbstract
             ++$markName;
         }
 
-        $regex = '~^(?|' . implode('|', $regexes) . ')$~';
+        $regex = '~^(?|' . \implode('|', $regexes) . ')$~';
         return ['regex' => $regex, 'routeMap' => $routeMap];
     }
 }

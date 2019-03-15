@@ -13,10 +13,10 @@ class GeneratorGroupPosBased extends DataGeneratorAbstract
             $regexes[] = $regex;
             $routeMap[$offset] = [$route->handler, $route->variables];
 
-            $offset += count($route->variables);
+            $offset += \count($route->variables);
         }
 
-        $regex = '~^(?:' . implode('|', $regexes) . ')$~';
+        $regex = '~^(?:' . \implode('|', $regexes) . ')$~';
         return ['regex' => $regex, 'routeMap' => $routeMap];
     }
 }

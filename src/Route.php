@@ -42,7 +42,7 @@ class Route
     public function matches(string $str):bool
     {
         $regex = '~^' . $this->regex . '$~';
-        $preg_match = preg_match($regex, $str);
+        $preg_match = \preg_match($regex, $str);
         \FastRoute\catch_preg_error(__METHOD__, $regex, $str);
         return (bool) $preg_match;
     }

@@ -10,16 +10,16 @@ class GeneratorGroupCountBased extends DataGeneratorAbstract
         $regexes = [];
         $numGroups = 0;
         foreach ($regexToRoutesMap as $regex => $route) {
-            $numVariables = count($route->variables);
-            $numGroups = max($numGroups, $numVariables);
+            $numVariables = \count($route->variables);
+            $numGroups = \max($numGroups, $numVariables);
 
-            $regexes[] = $regex . str_repeat('()', $numGroups - $numVariables);
+            $regexes[] = $regex . \str_repeat('()', $numGroups - $numVariables);
             $routeMap[$numGroups + 1] = [$route->handler, $route->variables];
 
             ++$numGroups;
         }
 
-        $regex = '~^(?|' . implode('|', $regexes) . ')$~';
+        $regex = '~^(?|' . \implode('|', $regexes) . ')$~';
         return ['regex' => $regex, 'routeMap' => $routeMap];
     }
 }

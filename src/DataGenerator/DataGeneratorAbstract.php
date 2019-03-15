@@ -48,9 +48,9 @@ abstract class DataGeneratorAbstract implements DataGeneratorInterface
     {
         $data = [];
         foreach ($this->methodToRegexToRoutesMap as $method => $regexToRoutesMap) {
-            $chunkSize = $this->computeChunkSize(count($regexToRoutesMap));
-            $chunks = array_chunk($regexToRoutesMap, $chunkSize, true);
-            $data[$method] = array_map([$this, 'processChunk'], $chunks);
+            $chunkSize = $this->computeChunkSize(\count($regexToRoutesMap));
+            $chunks = \array_chunk($regexToRoutesMap, $chunkSize, true);
+            $data[$method] = \array_map([$this, 'processChunk'], $chunks);
         }
         return $data;
     }
@@ -61,8 +61,8 @@ abstract class DataGeneratorAbstract implements DataGeneratorInterface
      */
     protected function computeChunkSize(int $count):int
     {
-        $numParts = max(1, round($count / $this->approxChunkSize));
-        return (int) ceil($count / $numParts);
+        $numParts = \max(1, \round($count / $this->approxChunkSize));
+        return (int) \ceil($count / $numParts);
     }
 
     /**
@@ -71,7 +71,7 @@ abstract class DataGeneratorAbstract implements DataGeneratorInterface
      */
     private function isStaticRoute(array $routeData):bool
     {
-        return count($routeData) === 1 && is_string($routeData[0]);
+        return \count($routeData) === 1 && \is_string($routeData[0]);
     }
 
     private function addStaticRoute(string $httpMethod, array $routeData, $handler):void
@@ -79,7 +79,7 @@ abstract class DataGeneratorAbstract implements DataGeneratorInterface
         $routeStr = $routeData[0];
 
         if (isset($this->staticRoutes[$httpMethod][$routeStr])) {
-            throw new BadRouteException(sprintf(
+            throw new BadRouteException(\sprintf(
                 'Cannot register two routes matching "%s" for method "%s"',
                 $routeStr, $httpMethod
             ));
@@ -88,7 +88,7 @@ abstract class DataGeneratorAbstract implements DataGeneratorInterface
         if (isset($this->methodToRegexToRoutesMap[$httpMethod])) {
             foreach ($this->methodToRegexToRoutesMap[$httpMethod] as $route) {
                 if ($route->matches($routeStr)) {
-                    throw new BadRouteException(sprintf(
+                    throw new BadRouteException(\sprintf(
                         'Static route "%s" is shadowed by previously defined variable route "%s" for method "%s"',
                         $routeStr, $route->regex, $httpMethod
                     ));
@@ -104,7 +104,7 @@ abstract class DataGeneratorAbstract implements DataGeneratorInterface
         [$regex, $variables] = $this->buildRegexForRoute($routeData);
 
         if (isset($this->methodToRegexToRoutesMap[$httpMethod][$regex])) {
-            throw new BadRouteException(sprintf(
+            throw new BadRouteException(\sprintf(
                 'Cannot register two routes matching "%s" for method "%s"',
                 $regex, $httpMethod
             ));
@@ -124,21 +124,21 @@ abstract class DataGeneratorAbstract implements DataGeneratorInterface
         $regex = '';
         $variables = [];
         foreach ($routeData as $part) {
-            if (is_string($part)) {
-                $regex .= preg_quote($part, '~');
+            if (\is_string($part)) {
+                $regex .= \preg_quote($part, '~');
                 continue;
             }
 
             [$varName, $regexPart] = $part;
 
             if (isset($variables[$varName])) {
-                throw new BadRouteException(sprintf(
+                throw new BadRouteException(\sprintf(
                     'Cannot use the same placeholder "%s" twice', $varName
                 ));
             }
 
             if ($this->regexHasCapturingGroups($regexPart)) {
-                throw new BadRouteException(sprintf(
+                throw new BadRouteException(\sprintf(
                     'Regex "%s" for parameter "%s" contains a capturing group',
                     $regexPart, $varName
                 ));
@@ -163,7 +163,7 @@ abstract class DataGeneratorAbstract implements DataGeneratorInterface
         }
 
         // Semi-accurate detection for capturing groups
-        $preg_match = preg_match(
+        $preg_match = \preg_match(
             '~
                 (?:
                     \(\?\(
