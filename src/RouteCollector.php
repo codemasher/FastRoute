@@ -49,6 +49,19 @@ class RouteCollector
     }
 
     /**
+     * @param string $route
+     * @param mixed  $handler
+     *
+     * @return \FastRoute\RouteCollector
+     */
+    public function any(string $route, $handler):RouteCollector
+    {
+        $this->addRoute(['*'], $route, $handler);
+
+        return $this;
+    }
+
+    /**
      * Adds a GET route to the collection
      *
      * This is simply an alias of $this->addRoute('GET', $route, $handler)
