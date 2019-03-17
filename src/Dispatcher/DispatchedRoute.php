@@ -20,6 +20,11 @@ namespace FastRoute\Dispatcher;
  */
 class DispatchedRoute{
 
+	public const NOT_FOUND          = 0;
+	public const FOUND              = 1;
+	public const METHOD_NOT_ALLOWED = 2;
+
+
 	/** @var int */
 	protected $status;
 
