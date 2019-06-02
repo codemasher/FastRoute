@@ -10,7 +10,8 @@ class RouteCollectorTest extends TestCase
     {
         $r = new DummyRouteCollector();
 
-        $r->delete('/delete', 'delete');
+	    $r->any('/any', 'any');
+	    $r->delete('/delete', 'delete');
         $r->get('/get', 'get');
         $r->head('/head', 'head');
         $r->patch('/patch', 'patch');
@@ -19,7 +20,8 @@ class RouteCollectorTest extends TestCase
         $r->options('/options', 'options');
 
         $expected = [
-            ['DELETE', '/delete', 'delete'],
+	        ['*', '/any', 'any'],
+	        ['DELETE', '/delete', 'delete'],
             ['GET', '/get', 'get'],
             ['HEAD', '/head', 'head'],
             ['PATCH', '/patch', 'patch'],
