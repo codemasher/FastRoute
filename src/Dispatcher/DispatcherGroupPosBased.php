@@ -4,31 +4,35 @@ namespace FastRoute\Dispatcher;
 
 use function FastRoute\catch_preg_error;
 
-class DispatcherGroupPosBased extends DispatcherAbstract
-{
-    protected function dispatchVariableRoute(array $routeData, string $uri):DispatchedRoute
-    {
-        foreach ($routeData as $data) {
-            $preg_match = \preg_match($data['regex'], $uri, $matches);
-            catch_preg_error(__METHOD__, $data['regex'], $uri);
+class DispatcherGroupPosBased extends DispatcherAbstract{
 
-            if (!$preg_match) {
-                continue;
-            }
+	protected function dispatchVariableRoute(array $routeData, string $uri):DispatchedRoute{
 
-            // find first non-empty match
-            /** @noinspection PhpStatementHasEmptyBodyInspection */
-            for ($i = 1; $matches[$i] === ''; ++$i);
+		foreach($routeData as $data){
+			$preg_match = \preg_match($data['regex'], $uri, $matches);
+			catch_preg_error(__METHOD__, $data['regex'], $uri);
 
-            [$handler, $varNames] = $data['routeMap'][$i];
+			if(!$preg_match){
+				continue;
+			}
 
-            $vars = [];
-            foreach ($varNames as $varName) {
-                $vars[$varName] = $matches[$i++];
-            }
-            return new DispatchedRoute(self::FOUND, $handler, $vars);
-        }
+			// find first non-empty match
+			/** @noinspection PhpStatementHasEmptyBodyInspection */
+			for($i = 1; $matches[$i] === ''; ++$i){
+			}
 
-        return new DispatchedRoute(self::NOT_FOUND);
-    }
+			[$handler, $varNames] = $data['routeMap'][$i];
+
+			$vars = [];
+
+			foreach($varNames as $varName){
+				$vars[$varName] = $matches[$i++];
+			}
+
+			return new DispatchedRoute(self::FOUND, $handler, $vars);
+		}
+
+		return new DispatchedRoute(self::NOT_FOUND);
+	}
+
 }

@@ -2,27 +2,30 @@
 
 namespace FastRoute\DataGenerator;
 
-class GeneratorCharCountBased extends DataGeneratorAbstract
-{
+class GeneratorCharCountBased extends DataGeneratorAbstract{
+
 	protected int $approxChunkSize = 30;
 
-    protected function processChunk(array $regexToRoutesMap):array
-    {
-        $routeMap = [];
-        $regexes = [];
+	protected function processChunk(array $regexToRoutesMap):array{
+		$routeMap  = [];
+		$regexes   = [];
+		$suffixLen = 0;
+		$suffix    = '';
+		$count     = \count($regexToRoutesMap);
 
-        $suffixLen = 0;
-        $suffix = '';
-        $count = \count($regexToRoutesMap);
-        foreach ($regexToRoutesMap as $regex => $route) {
-            $suffixLen++;
-            $suffix .= "\t";
+		foreach($regexToRoutesMap as $regex => $route){
+			$suffixLen++;
+			$suffix .= "\t";
 
-            $regexes[] = '(?:' . $regex . '/(\t{' . $suffixLen . '})\t{' . ($count - $suffixLen) . '})';
-            $routeMap[$suffix] = [$route->handler, $route->variables];
-        }
+			$regexes[]         = '(?:'.$regex.'/(\t{'.$suffixLen.'})\t{'.($count - $suffixLen).'})';
+			$routeMap[$suffix] = [$route->handler, $route->variables];
+		}
 
-        $regex = '~^(?|' . \implode('|', $regexes) . ')$~';
-        return ['regex' => $regex, 'suffix' => '/' . $suffix, 'routeMap' => $routeMap];
-    }
+		return [
+			'regex'    => '~^(?|'.\implode('|', $regexes).')$~',
+			'suffix'   => '/'.$suffix,
+			'routeMap' => $routeMap
+		];
+	}
+
 }

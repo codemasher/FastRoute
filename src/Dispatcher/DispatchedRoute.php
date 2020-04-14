@@ -24,7 +24,6 @@ class DispatchedRoute{
 	public const FOUND              = 1;
 	public const METHOD_NOT_ALLOWED = 2;
 
-
 	/** @var int */
 	protected int $status;
 
@@ -37,11 +36,19 @@ class DispatchedRoute{
 	/** @var array|null */
 	protected ?array $allowed = null;
 
-	public function __construct(int $status, $handler = null, array $arguments = null, array $allowed = null){
+	/**
+	 * DispatchedRoute constructor.
+	 *
+	 * @param int        $status
+	 * @param mixed|null $handler
+	 * @param array|null $arguments
+	 * @param array|null $allowedMethods
+	 */
+	public function __construct(int $status, $handler = null, array $arguments = null, array $allowedMethods = null){
 		$this->status         = $status;
 		$this->handler        = $handler;
 		$this->arguments      = $arguments ?? [];
-		$this->allowedMethods = $allowed;
+		$this->allowedMethods = $allowedMethods;
 	}
 
 	/**

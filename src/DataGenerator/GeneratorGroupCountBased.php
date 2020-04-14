@@ -2,24 +2,27 @@
 
 namespace FastRoute\DataGenerator;
 
-class GeneratorGroupCountBased extends DataGeneratorAbstract
-{
-    protected function processChunk(array $regexToRoutesMap):array
-    {
-        $routeMap = [];
-        $regexes = [];
-        $numGroups = 0;
-        foreach ($regexToRoutesMap as $regex => $route) {
-            $numVariables = \count($route->variables);
-            $numGroups = \max($numGroups, $numVariables);
+class GeneratorGroupCountBased extends DataGeneratorAbstract{
 
-            $regexes[] = $regex . \str_repeat('()', $numGroups - $numVariables);
-            $routeMap[$numGroups + 1] = [$route->handler, $route->variables];
+	protected function processChunk(array $regexToRoutesMap):array{
+		$routeMap  = [];
+		$regexes   = [];
+		$numGroups = 0;
 
-            ++$numGroups;
-        }
+		foreach($regexToRoutesMap as $regex => $route){
+			$numVariables = \count($route->variables);
+			$numGroups    = \max($numGroups, $numVariables);
 
-        $regex = '~^(?|' . \implode('|', $regexes) . ')$~';
-        return ['regex' => $regex, 'routeMap' => $routeMap];
-    }
+			$regexes[]                = $regex.\str_repeat('()', $numGroups - $numVariables);
+			$routeMap[$numGroups + 1] = [$route->handler, $route->variables];
+
+			++$numGroups;
+		}
+
+		return [
+			'regex'    => '~^(?|'.\implode('|', $regexes).')$~',
+			'routeMap' => $routeMap
+		];
+	}
+
 }

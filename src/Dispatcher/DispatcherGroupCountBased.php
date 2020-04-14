@@ -4,28 +4,31 @@ namespace FastRoute\Dispatcher;
 
 use function FastRoute\catch_preg_error;
 
-class DispatcherGroupCountBased extends DispatcherAbstract
-{
-    protected function dispatchVariableRoute(array $routeData, string $uri):DispatchedRoute
-    {
-        foreach ($routeData as $data) {
-            $preg_match = \preg_match($data['regex'], $uri, $matches);
-            catch_preg_error(__METHOD__, $data['regex'], $uri);
+class DispatcherGroupCountBased extends DispatcherAbstract{
 
-            if (!$preg_match) {
-                continue;
-            }
+	protected function dispatchVariableRoute(array $routeData, string $uri):DispatchedRoute{
 
-            [$handler, $varNames] = $data['routeMap'][count($matches)];
+		foreach($routeData as $data){
+			$preg_match = \preg_match($data['regex'], $uri, $matches);
+			catch_preg_error(__METHOD__, $data['regex'], $uri);
 
-            $vars = [];
-            $i = 0;
-            foreach ($varNames as $varName) {
-                $vars[$varName] = $matches[++$i];
-            }
-            return new DispatchedRoute(self::FOUND, $handler, $vars);
-        }
+			if(!$preg_match){
+				continue;
+			}
 
-        return new DispatchedRoute(self::NOT_FOUND);
-    }
+			[$handler, $varNames] = $data['routeMap'][count($matches)];
+
+			$vars = [];
+			$i    = 0;
+
+			foreach($varNames as $varName){
+				$vars[$varName] = $matches[++$i];
+			}
+
+			return new DispatchedRoute(self::FOUND, $handler, $vars);
+		}
+
+		return new DispatchedRoute(self::NOT_FOUND);
+	}
+
 }

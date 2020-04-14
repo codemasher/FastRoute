@@ -4,167 +4,179 @@ namespace FastRoute\DataGenerator;
 
 use FastRoute\{BadRouteException, Route};
 
-abstract class DataGeneratorAbstract implements DataGeneratorInterface
-{
-    /** @var mixed[][] */
-    protected array $staticRoutes = [];
+use function FastRoute\catch_preg_error;
 
-    /** @var Route[][] */
-    protected array $methodToRegexToRoutesMap = [];
+abstract class DataGeneratorAbstract implements DataGeneratorInterface{
 
-    /** @var int */
-    protected int $approxChunkSize = 10;
+	/** @var mixed[][] */
+	protected array $staticRoutes = [];
+	/** @var Route[][] */
+	protected array $methodToRegexToRoutesMap = [];
 
-    /**
-     * @return mixed[]
-     */
-    abstract protected function processChunk(array $regexToRoutesMap):array;
+	protected int $approxChunkSize = 10;
 
-    public function addRoute(string $httpMethod, array $routeData, $handler):void
-    {
-        if ($this->isStaticRoute($routeData)) {
-            $this->addStaticRoute($httpMethod, $routeData, $handler);
-        } else {
-            $this->addVariableRoute($httpMethod, $routeData, $handler);
-        }
-    }
+	/**
+	 * @return mixed[]
+	 */
+	abstract protected function processChunk(array $regexToRoutesMap):array;
 
-    /**
-     * @return mixed[]
-     */
-    public function getData():array
-    {
-        if (empty($this->methodToRegexToRoutesMap)) {
-            return [$this->staticRoutes, []];
-        }
+	/**
+	 * @inheritDoc
+	 */
+	public function addRoute(string $httpMethod, array $routeData, $handler):void{
 
-        return [$this->staticRoutes, $this->generateVariableRouteData()];
-    }
+		$this->isStaticRoute($routeData)
+			? $this->addStaticRoute($httpMethod, $routeData, $handler)
+			: $this->addVariableRoute($httpMethod, $routeData, $handler);
+	}
 
-    /**
-     * @return mixed[]
-     */
-    private function generateVariableRouteData():array
-    {
-        $data = [];
-        foreach ($this->methodToRegexToRoutesMap as $method => $regexToRoutesMap) {
-            $chunkSize = $this->computeChunkSize(\count($regexToRoutesMap));
-            $chunks = \array_chunk($regexToRoutesMap, $chunkSize, true);
-            $data[$method] = \array_map([$this, 'processChunk'], $chunks);
-        }
-        return $data;
-    }
+	/**
+	 * @return mixed[]
+	 */
+	public function getData():array{
 
-    /**
-     * @param int
-     * @return int
-     */
-    protected function computeChunkSize(int $count):int
-    {
-        $numParts = \max(1, \round($count / $this->approxChunkSize));
-        return (int) \ceil($count / $numParts);
-    }
+		if(empty($this->methodToRegexToRoutesMap)){
+			return [$this->staticRoutes, []];
+		}
 
-    /**
-     * @param mixed[]
-     * @return bool
-     */
-    private function isStaticRoute(array $routeData):bool
-    {
-        return \count($routeData) === 1 && \is_string($routeData[0]);
-    }
+		return [$this->staticRoutes, $this->generateVariableRouteData()];
+	}
 
-    private function addStaticRoute(string $httpMethod, array $routeData, $handler):void
-    {
-        $routeStr = $routeData[0];
+	/**
+	 * @return mixed[]
+	 */
+	private function generateVariableRouteData():array{
+		$data = [];
 
-        if (isset($this->staticRoutes[$httpMethod][$routeStr])) {
-            throw new BadRouteException(\sprintf(
-                'Cannot register two routes matching "%s" for method "%s"',
-                $routeStr, $httpMethod
-            ));
-        }
+		foreach($this->methodToRegexToRoutesMap as $method => $regexToRoutesMap){
+			$chunkSize     = $this->computeChunkSize(\count($regexToRoutesMap));
+			$chunks        = \array_chunk($regexToRoutesMap, $chunkSize, true);
+			$data[$method] = \array_map([$this, 'processChunk'], $chunks);
+		}
 
-        if (isset($this->methodToRegexToRoutesMap[$httpMethod])) {
-            foreach ($this->methodToRegexToRoutesMap[$httpMethod] as $route) {
-                if ($route->matches($routeStr)) {
-                    throw new BadRouteException(\sprintf(
-                        'Static route "%s" is shadowed by previously defined variable route "%s" for method "%s"',
-                        $routeStr, $route->regex, $httpMethod
-                    ));
-                }
-            }
-        }
+		return $data;
+	}
 
-        $this->staticRoutes[$httpMethod][$routeStr] = $handler;
-    }
+	/**
+	 * @param int
+	 *
+	 * @return int
+	 */
+	protected function computeChunkSize(int $count):int{
+		$numParts = \max(1, \round($count / $this->approxChunkSize));
 
-    private function addVariableRoute(string $httpMethod, array $routeData, $handler):void
-    {
-        [$regex, $variables] = $this->buildRegexForRoute($routeData);
+		return (int)\ceil($count / $numParts);
+	}
 
-        if (isset($this->methodToRegexToRoutesMap[$httpMethod][$regex])) {
-            throw new BadRouteException(\sprintf(
-                'Cannot register two routes matching "%s" for method "%s"',
-                $regex, $httpMethod
-            ));
-        }
+	/**
+	 * @param mixed[]
+	 *
+	 * @return bool
+	 */
+	private function isStaticRoute(array $routeData):bool{
+		return \count($routeData) === 1 && \is_string($routeData[0]);
+	}
 
-        $this->methodToRegexToRoutesMap[$httpMethod][$regex] = new Route(
-            $httpMethod, $handler, $regex, $variables
-        );
-    }
+	private function addStaticRoute(string $httpMethod, array $routeData, $handler):void{
+		$routeStr = $routeData[0];
 
-    /**
-     * @param mixed[]
-     * @return mixed[]
-     */
-    private function buildRegexForRoute(array $routeData):array
-    {
-        $regex = '';
-        $variables = [];
-        foreach ($routeData as $part) {
-            if (\is_string($part)) {
-                $regex .= \preg_quote($part, '~');
-                continue;
-            }
+		if(isset($this->staticRoutes[$httpMethod][$routeStr])){
+			throw new BadRouteException(
+				\sprintf(
+					'Cannot register two routes matching "%s" for method "%s"',
+					$routeStr, $httpMethod
+				)
+			);
+		}
 
-            [$varName, $regexPart] = $part;
+		if(isset($this->methodToRegexToRoutesMap[$httpMethod])){
+			foreach($this->methodToRegexToRoutesMap[$httpMethod] as $route){
+				if($route->matches($routeStr)){
+					throw new BadRouteException(
+						\sprintf(
+							'Static route "%s" is shadowed by previously defined variable route "%s" for method "%s"',
+							$routeStr, $route->regex, $httpMethod
+						)
+					);
+				}
+			}
+		}
 
-            if (isset($variables[$varName])) {
-                throw new BadRouteException(\sprintf(
-                    'Cannot use the same placeholder "%s" twice', $varName
-                ));
-            }
+		$this->staticRoutes[$httpMethod][$routeStr] = $handler;
+	}
 
-            if ($this->regexHasCapturingGroups($regexPart)) {
-                throw new BadRouteException(\sprintf(
-                    'Regex "%s" for parameter "%s" contains a capturing group',
-                    $regexPart, $varName
-                ));
-            }
+	private function addVariableRoute(string $httpMethod, array $routeData, $handler):void{
+		[$regex, $variables] = $this->buildRegexForRoute($routeData);
 
-            $variables[$varName] = $varName;
-            $regex .= '(' . $regexPart . ')';
-        }
+		if(isset($this->methodToRegexToRoutesMap[$httpMethod][$regex])){
+			throw new BadRouteException(
+				\sprintf(
+					'Cannot register two routes matching "%s" for method "%s"',
+					$regex, $httpMethod
+				)
+			);
+		}
 
-        return [$regex, $variables];
-    }
+		$this->methodToRegexToRoutesMap[$httpMethod][$regex] = new Route($httpMethod, $handler, $regex, $variables);
+	}
 
-    /**
-     * @param string
-     * @return bool
-     */
-    private function regexHasCapturingGroups(string $regex):bool
-    {
-        if (\strpos($regex, '(') === false) {
-            // Needs to have at least a ( to contain a capturing group
-            return false;
-        }
+	/**
+	 * @param mixed[]
+	 *
+	 * @return mixed[]
+	 */
+	private function buildRegexForRoute(array $routeData):array{
+		$regex     = '';
+		$variables = [];
 
-        // Semi-accurate detection for capturing groups
-        $preg_match = \preg_match(
-            '~
+		foreach($routeData as $part){
+
+			if(\is_string($part)){
+				$regex .= \preg_quote($part, '~');
+				continue;
+			}
+
+			[$varName, $regexPart] = $part;
+
+			if(isset($variables[$varName])){
+				throw new BadRouteException(
+					\sprintf(
+						'Cannot use the same placeholder "%s" twice', $varName
+					)
+				);
+			}
+
+			if($this->regexHasCapturingGroups($regexPart)){
+				throw new BadRouteException(
+					\sprintf(
+						'Regex "%s" for parameter "%s" contains a capturing group',
+						$regexPart, $varName
+					)
+				);
+			}
+
+			$variables[$varName] = $varName;
+			$regex               .= '('.$regexPart.')';
+		}
+
+		return [$regex, $variables];
+	}
+
+	/**
+	 * @param string
+	 *
+	 * @return bool
+	 */
+	private function regexHasCapturingGroups(string $regex):bool{
+
+		if(\strpos($regex, '(') === false){
+			// Needs to have at least a ( to contain a capturing group
+			return false;
+		}
+
+		// Semi-accurate detection for capturing groups
+		$preg_match = \preg_match(/** @lang text */
+			'~
                 (?:
                     \(\?\(
                   | \[ [^\]\\\\]* (?: \\\\ . [^\]\\\\]* )* \]
@@ -176,11 +188,12 @@ abstract class DataGeneratorAbstract implements DataGeneratorInterface
                   | \*
                 )
             ~x',
-            $regex
-        );
+			$regex
+		);
 
-        \FastRoute\catch_preg_error(__METHOD__, '-', $regex);
+		catch_preg_error(__METHOD__, '-', $regex);
 
-        return (bool)$preg_match;
-    }
+		return (bool)$preg_match;
+	}
+
 }

@@ -3,97 +3,100 @@
 namespace FastRoute;
 
 use FastRoute\DataGenerator\GeneratorGroupCountBased;
-use FastRoute\Dispatcher\{DispatcherInterface, DispatcherGroupCountBased};
+use FastRoute\Dispatcher\{DispatcherGroupCountBased, DispatcherInterface};
 use FastRoute\RouteParser\Std;
 
-if (!function_exists('FastRoute\simpleDispatcher')) {
-    /**
-     * @param callable $routeDefinitionCallback
-     * @param array $options
-     *
-     * @return \FastRoute\Dispatcher\DispatcherInterface
-     */
-    function simpleDispatcher(callable $routeDefinitionCallback, array $options = []):DispatcherInterface
-    {
-        $options += [
-            'routeParser' => Std::class,
-            'dataGenerator' => GeneratorGroupCountBased::class,
-            'dispatcher' => DispatcherGroupCountBased::class,
-            'routeCollector' => RouteCollector::class,
-        ];
+if(!function_exists('FastRoute\\simpleDispatcher')){
 
-        /** @var RouteCollector $routeCollector */
-        $routeCollector = new $options['routeCollector'](
-            new $options['routeParser'], new $options['dataGenerator']
-        );
-        $routeDefinitionCallback($routeCollector);
+	/**
+	 * @param callable $routeDefinitionCallback
+	 * @param array    $options
+	 *
+	 * @return \FastRoute\Dispatcher\DispatcherInterface
+	 */
+	function simpleDispatcher(callable $routeDefinitionCallback, array $options = []):DispatcherInterface{
 
-        return new $options['dispatcher']($routeCollector->getData());
-    }
+		$options += [
+			'routeParser'    => Std::class,
+			'dataGenerator'  => GeneratorGroupCountBased::class,
+			'dispatcher'     => DispatcherGroupCountBased::class,
+			'routeCollector' => RouteCollector::class,
+		];
 
-    /**
-     * @param callable $routeDefinitionCallback
-     * @param array $options
-     *
-     * @return \FastRoute\Dispatcher\DispatcherInterface
-     */
-    function cachedDispatcher(callable $routeDefinitionCallback, array $options = []):DispatcherInterface
-    {
-        $options += [
-            'routeParser' => Std::class,
-            'dataGenerator' => GeneratorGroupCountBased::class,
-            'dispatcher' => DispatcherGroupCountBased::class,
-            'routeCollector' => RouteCollector::class,
-            'cacheDisabled' => false,
-        ];
+		/** @var RouteCollector $routeCollector */
+		$routeCollector = new $options['routeCollector'](new $options['routeParser'], new $options['dataGenerator']);
 
-        if (!isset($options['cacheFile'])) {
-            throw new \LogicException('Must specify "cacheFile" option');
-        }
+		$routeDefinitionCallback($routeCollector);
 
-        if (!$options['cacheDisabled'] && file_exists($options['cacheFile'])) {
-            $dispatchData = require $options['cacheFile'];
-            if (!\is_array($dispatchData)) {
-                throw new \RuntimeException('Invalid cache file "' . $options['cacheFile'] . '"');
-            }
-            return new $options['dispatcher']($dispatchData);
-        }
+		return new $options['dispatcher']($routeCollector->getData());
+	}
 
-        $routeCollector = new $options['routeCollector'](
-            new $options['routeParser'], new $options['dataGenerator']
-        );
-        $routeDefinitionCallback($routeCollector);
+	/**
+	 * @param callable $routeDefinitionCallback
+	 * @param array    $options
+	 *
+	 * @return \FastRoute\Dispatcher\DispatcherInterface
+	 */
+	function cachedDispatcher(callable $routeDefinitionCallback, array $options = []):DispatcherInterface{
 
-        /** @var RouteCollector $routeCollector */
-        $dispatchData = $routeCollector->getData();
-        if (!$options['cacheDisabled']) {
-            \file_put_contents(
-                $options['cacheFile'],
-                '<?php return ' . \var_export($dispatchData, true) . ';'
-            );
-        }
+		$options += [
+			'routeParser'    => Std::class,
+			'dataGenerator'  => GeneratorGroupCountBased::class,
+			'dispatcher'     => DispatcherGroupCountBased::class,
+			'routeCollector' => RouteCollector::class,
+			'cacheDisabled'  => false,
+		];
 
-        return new $options['dispatcher']($dispatchData);
-    }
+		if(!isset($options['cacheFile'])){
+			throw new \LogicException('Must specify "cacheFile" option');
+		}
 
-    function catch_preg_error(string $fn, string $pattern, string $data):void{
-        $preg_error = \preg_last_error();
+		if(!$options['cacheDisabled'] && \file_exists($options['cacheFile'])){
+			$dispatchData = require $options['cacheFile'];
 
-        if($preg_error !== \PREG_NO_ERROR){
-            $errors = [
-                \PREG_INTERNAL_ERROR        => 'PREG_INTERNAL_ERROR',
-                \PREG_BACKTRACK_LIMIT_ERROR => 'PREG_BACKTRACK_LIMIT_ERROR',
-                \PREG_RECURSION_LIMIT_ERROR => 'PREG_RECURSION_LIMIT_ERROR',
-                \PREG_BAD_UTF8_ERROR        => 'PREG_BAD_UTF8_ERROR',
-                \PREG_BAD_UTF8_OFFSET_ERROR => 'PREG_BAD_UTF8_OFFSET_ERROR',
-                \PREG_JIT_STACKLIMIT_ERROR  => 'PREG_JIT_STACKLIMIT_ERROR',
-            ];
+			if(!\is_array($dispatchData)){
+				throw new \RuntimeException('Invalid cache file "'.$options['cacheFile'].'"');
+			}
 
-            throw new \RuntimeException(
-                $fn.': '.($errors[$preg_error] ?? 'unknown preg_error').PHP_EOL
-                .'pattern: '.$pattern.PHP_EOL
-                .'data: '.$data
-            );
-        }
-    }
+			return new $options['dispatcher']($dispatchData);
+		}
+
+		/** @var RouteCollector $routeCollector */
+		$routeCollector = new $options['routeCollector'](new $options['routeParser'], new $options['dataGenerator']);
+
+		$routeDefinitionCallback($routeCollector);
+
+		$dispatchData = $routeCollector->getData();
+
+		if(!$options['cacheDisabled']){
+			\file_put_contents(
+				$options['cacheFile'],
+				'<?php return '.\var_export($dispatchData, true).';'
+			);
+		}
+
+		return new $options['dispatcher']($dispatchData);
+	}
+
+	function catch_preg_error(string $fn, string $pattern, string $data):void{
+		$preg_error = \preg_last_error();
+
+		if($preg_error !== \PREG_NO_ERROR){
+			$errors = [
+				\PREG_INTERNAL_ERROR        => 'PREG_INTERNAL_ERROR',
+				\PREG_BACKTRACK_LIMIT_ERROR => 'PREG_BACKTRACK_LIMIT_ERROR',
+				\PREG_RECURSION_LIMIT_ERROR => 'PREG_RECURSION_LIMIT_ERROR',
+				\PREG_BAD_UTF8_ERROR        => 'PREG_BAD_UTF8_ERROR',
+				\PREG_BAD_UTF8_OFFSET_ERROR => 'PREG_BAD_UTF8_OFFSET_ERROR',
+				\PREG_JIT_STACKLIMIT_ERROR  => 'PREG_JIT_STACKLIMIT_ERROR',
+			];
+
+			throw new \RuntimeException(
+				$fn.': '.($errors[$preg_error] ?? 'unknown preg_error').PHP_EOL
+				.'pattern: '.$pattern.PHP_EOL
+				.'data: '.$data
+			);
+		}
+	}
+
 }

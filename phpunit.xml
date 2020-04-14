@@ -5,16 +5,16 @@
 		 colors="true"
 		 verbose="true"
 >
-    <testsuites>
-        <testsuite name="FastRoute Tests">
-            <directory suffix=".php">./test/</directory>
-        </testsuite>
-    </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./src/</directory>
-        </whitelist>
-    </filter>
+	<testsuites>
+		<testsuite name="FastRoute Tests">
+			<directory suffix=".php">./test/</directory>
+		</testsuite>
+	</testsuites>
+	<filter>
+		<whitelist processUncoveredFilesFromWhitelist="true">
+			<directory suffix=".php">./src/</directory>
+		</whitelist>
+	</filter>
 	<logging>
 		<log type="coverage-clover" target=".build/coverage/clover.xml"/>
 		<log type="coverage-xml" target=".build/coverage/coverage-xml"/>
