@@ -5,10 +5,10 @@ namespace FastRoute\Dispatcher;
 abstract class DispatcherAbstract implements DispatcherInterface
 {
     /** @var mixed[][] */
-    protected $staticRouteMap = [];
+    protected array $staticRouteMap = [];
 
     /** @var mixed[] */
-    protected $variableRouteData = [];
+    protected array $variableRouteData = [];
 
     public function __construct(array $data = null)
     {

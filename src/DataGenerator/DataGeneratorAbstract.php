@@ -7,13 +7,13 @@ use FastRoute\{BadRouteException, Route};
 abstract class DataGeneratorAbstract implements DataGeneratorInterface
 {
     /** @var mixed[][] */
-    protected $staticRoutes = [];
+    protected array $staticRoutes = [];
 
     /** @var Route[][] */
-    protected $methodToRegexToRoutesMap = [];
+    protected array $methodToRegexToRoutesMap = [];
 
     /** @var int */
-    protected $approxChunkSize = 10;
+    protected int $approxChunkSize = 10;
 
     /**
      * @return mixed[]

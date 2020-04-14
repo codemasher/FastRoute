@@ -1,23 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         bootstrap="vendor/autoload.php"
-        >
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+		 bootstrap="vendor/autoload.php"
+		 cacheResultFile=".build/phpunit.result.cache"
+		 colors="true"
+		 verbose="true"
+>
     <testsuites>
         <testsuite name="FastRoute Tests">
-            <directory>./test/</directory>
+            <directory suffix=".php">./test/</directory>
         </testsuite>
     </testsuites>
-
     <filter>
-        <whitelist>
-            <directory>./src/</directory>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src/</directory>
         </whitelist>
     </filter>
+	<logging>
+		<log type="coverage-clover" target=".build/coverage/clover.xml"/>
+		<log type="coverage-xml" target=".build/coverage/coverage-xml"/>
+		<log type="junit" target=".build/logs/junit.xml"/>
+	</logging>
 </phpunit>

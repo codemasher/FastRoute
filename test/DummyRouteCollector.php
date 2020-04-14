@@ -5,9 +5,10 @@ use FastRoute\RouteCollector;
 
 class DummyRouteCollector extends RouteCollector
 {
-    public $routes = [];
+    public array $routes = [];
 
-    public function __construct()
+	/** @noinspection PhpMissingParentConstructorInspection */
+	public function __construct()
     {
     }
 

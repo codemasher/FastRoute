@@ -8,10 +8,10 @@ use FastRoute\RouteParser\RouteParserInterface;
 class RouteCollector
 {
     /** @var \FastRoute\RouteParser\RouteParserInterface */
-    protected $routeParser;
+    protected RouteParserInterface $routeParser;
 
     /** @var \FastRoute\DataGenerator\DataGeneratorInterface */
-    protected $dataGenerator;
+    protected DataGeneratorInterface $dataGenerator;
 
     /**
      * Constructs a route collector.

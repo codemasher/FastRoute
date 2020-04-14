@@ -5,13 +5,13 @@ namespace FastRoute;
 class Route
 {
     /** @var string */
-    public $httpMethod;
+    public string $httpMethod;
 
     /** @var string */
-    public $regex;
+    public string $regex;
 
     /** @var array */
-    public $variables;
+    public array $variables;
 
     /** @var mixed */
     public $handler;
@@ -43,7 +43,7 @@ class Route
     {
         $regex = '~^' . $this->regex . '$~';
         $preg_match = \preg_match($regex, $str);
-        \FastRoute\catch_preg_error(__METHOD__, $regex, $str);
+        catch_preg_error(__METHOD__, $regex, $str);
         return (bool) $preg_match;
     }
 }

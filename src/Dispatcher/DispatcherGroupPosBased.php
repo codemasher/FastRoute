@@ -2,13 +2,15 @@
 
 namespace FastRoute\Dispatcher;
 
+use function FastRoute\catch_preg_error;
+
 class DispatcherGroupPosBased extends DispatcherAbstract
 {
     protected function dispatchVariableRoute(array $routeData, string $uri):DispatchedRoute
     {
         foreach ($routeData as $data) {
             $preg_match = \preg_match($data['regex'], $uri, $matches);
-            \FastRoute\catch_preg_error(__METHOD__, $data['regex'], $uri);
+            catch_preg_error(__METHOD__, $data['regex'], $uri);
 
             if (!$preg_match) {
                 continue;

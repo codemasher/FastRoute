@@ -26,16 +26,16 @@ class DispatchedRoute{
 
 
 	/** @var int */
-	protected $status;
+	protected int $status;
 
 	/** @var mixed */
-	protected $handler;
+	protected $handler = null;
 
 	/** @var array */
-	protected $arguments;
+	protected ?array $arguments = null;
 
 	/** @var array|null */
-	protected $allowed;
+	protected ?array $allowed = null;
 
 	public function __construct(int $status, $handler = null, array $arguments = null, array $allowed = null){
 		$this->status         = $status;
