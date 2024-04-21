@@ -13,7 +13,7 @@
     displayDetailsOnTestsThatTriggerNotices="true"
     displayDetailsOnTestsThatTriggerWarnings="true"
     executionOrder="random"
-    cacheDirectory=".phpunit.cache"
+    cacheDirectory=".build/.phpunit.cache"
 >
     <testsuites>
         <testsuite name="FastRoute Tests">
