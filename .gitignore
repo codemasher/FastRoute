@@ -1,6 +1,8 @@
-/vendor/
+.build/
 .idea/
+.phpbench/
+vendor/
 
+phpcs.xml
+phpstan.neon
 phpunit.xml
-/*.cache
-/.phpbench
